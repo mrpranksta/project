@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Login </title>
+</head>
+<body>
+    <div id="Tiltle">
+    <h2 id="make_admin">Make Admin</h2>
+    </div>
+    <div id = "createAdmin">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="phone_number" placeholder="PhoneNumber">
+        <input type="text" id="role" list="role_list" placeholder="Role">
+        <datalist id="role_list">
+            <option value="doctor">
+            <option value="assist">
+            <option value="admin">
+
+            </option>
+        
+        </datalist>
+        <button onclick="addAdmin()">addAccount</button>
+    </div>
+   
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="../index1.js"></script>
+<script>
+    async function addAdmin(){
+    email = document.getElementById('email').value
+    password = document.getElementById('password').value
+    phoneNumber = document.getElementById('phone_number').value
+    role = document.getElementById('role').value
+ 
+    var data = {
+        Email : email,
+        Password : password,
+        PhoneNumber : phoneNumber,
+        Role : role,
+    }
+
+    if(role == "doctor"){
+        firebase.database().ref('doctorAccount/' + phoneNumber).set(data)
+        .then(()=>{
+        console.log('Add doctor success')
+        }
+    )}
+    else if(role == "assist"){
+        firebase.database().ref('assistAccount/' + phoneNumber).set(data)
+        .then(() => {
+            console.log('Add assist success')
+        })
+    }
+    else if(role == "admin"){
+        firebase.database().ref('adminAccount/' + phoneNumber).set(data)
+        .then(() => {
+            console.log('Add addmin success')
+        })
+    }
+    
+}
+</script>
+</html>

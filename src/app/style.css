@@ -1,0 +1,393 @@
+/* Reset CSS */
+* {
+    padding : 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#main {
+}
+
+#Header {
+    display: block;
+    position: relative;
+    height: 88px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 85px;
+    padding-right: 85px;
+    border-bottom-width: 0.8px;
+    line-height: 18px;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+
+.row {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.col-lg-2.col-6 {
+    display: block;
+    box-sizing: border-box;
+    flex-basis: 16.6667%;
+    max-width: 16.6667%;
+    height: 100%;
+    position: relative;
+    text-align: left;
+}
+
+.Logo {
+    box-sizing: border-box;
+    color: rgb(85, 85, 85);
+    display: block;
+    font-family: "Noto Sans JP", Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    height: 50px;
+    line-height: 18px;
+    text-align: left;
+    text-size-adjust: 100%;
+    width: 160px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.Logo h1 {
+    box-sizing: border-box;
+    color: rgb(4, 7, 68);
+    display: block;
+    font-family: "Noto Sans JP", Helvetica, sans-serif;
+    font-size: 40px;
+    font-weight: 500;
+    height: 50px;
+    line-height: 40px;
+    margin-block-end: 0px;
+    margin-block-start: 0px;
+    margin-bottom: 0px;
+    margin-inline-end: 0px;
+    margin-inline-start: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    padding-top: 20px;
+    text-align: left;
+    text-size-adjust: 100%;
+    width: 160px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.Logo h1 a {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url(https://www.booknmeet.com/img/bnm/BOOKNMEET.svg);
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-repeat: no-repeat;
+    background-size: 165px 30px;
+    box-sizing: border-box;
+    color: rgb(0, 184, 255);
+    cursor: pointer;
+    display: block;
+    font-family: "Noto Sans JP", Helvetica, sans-serif;
+    font-size: 40px;
+    font-weight: 500;
+    height: 30px;
+    line-height: 40px;
+    outline-color: rgb(0, 184, 255);
+    outline-style: none;
+    outline-width: 0px;
+    text-align: left;
+    text-decoration-color: rgb(0, 184, 255);
+    text-decoration-line: none;
+    text-decoration-style: solid;
+    text-decoration-thickness: auto;
+    text-indent: -9999px;
+    text-size-adjust: 100%;
+    transition-behavior: normal;
+    transition-delay: 0s;
+    transition-duration: 0.5s;
+    transition-property: all;
+    transition-timing-function: ease-in-out;
+    width: 165px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.col-lg-10.col-6 {
+    display: block;
+    box-sizing: border-box;
+    flex-basis: 83.3333%;
+    max-width: 83.3333%;
+    height: 100%;
+    position: relative;
+    text-align: left;
+}
+
+.main-menu {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin-top: -20px;
+}
+
+.nav {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: end;
+}
+
+.nav li {
+    display: inline-block;
+    height: 100%;
+    padding: 10px;
+}
+
+.nav li a {
+    display: block;
+    color: rgb(32, 32, 121);
+    text-decoration: none;
+    line-height: 68px;
+    height: 100%;
+    font-weight: 500;
+    font-size: 18px;
+    
+}
+
+.nav li a small {
+    display: block;
+    color: rgb(8, 57, 156);
+    margin-top: -45px;
+    line-height: 65px;
+    font-size: 14px;
+}
+
+.nav li:hover a {
+    color: #00b8ff; 
+}
+
+.nav li a i {
+    font-size: 30px;
+   
+}
+
+.SearchBox {
+    height: 500px;
+    width: 100%;
+    display: table;
+}
+
+.SearchBox.version1 {
+    
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: rgb(4, 7, 68);
+    background-image: url(https://www.booknmeet.com/img/hero_home_bg_1.svg);
+    background-origin: padding-box;
+    background-position-x: 100%;
+    background-position-y: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-sizing: border-box;
+    color: rgb(85, 85, 85);
+    display: block;
+    font-family: "Noto Sans JP", Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    height: 500px;
+    line-height: 18px;
+    text-align: left;
+    text-size-adjust: 100%;
+    width: 100%     ;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.SearchBox .content {
+    padding-top: 121px;
+    vertical-align: middle;
+    text-align: center;
+}
+.SearchBox div h3 {
+    color: white;
+    font-size: 30px;
+    font-weight: 300;
+}
+
+.SearchBox div p {
+    color: white;
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    line-height: 24px;
+    text-shadow: rgba(0, 0, 0, 0.25);
+}
+
+.Searchbox_input {
+    display: block;
+    width: 100%;
+}
+
+.Searchbox_input .container {
+    display: flex;
+    justify-content: center;
+    max-width: 1140px;
+    margin: auto;
+}
+
+.col-lg-4 {
+    color: #08399c;
+    display: block;
+    box-sizing: border-box;
+    flex-basis: 33.3333%;
+    max-width: 33.3333%;
+    height: 100%;
+    position: relative;
+    text-align: left;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.col-lg-4 select {
+    color: #08399c;
+    display: inline-block;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 5px;
+    padding-left: 20px;
+    height: 50px;
+    font-weight: 500;
+    border-style: none;
+}
+
+.col-lg-4 input {
+    font-size: 16px;
+    height: 50px;
+    border-style: none;
+}
+
+.search-query.ui-autocomplete-input {
+    color: #08399c;
+    padding-left: 20px;
+    border-style: none;
+    outline: none;
+    width: calc(100% - 94px);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.search-query.ui-autocomplete-input::placeholder {
+    color: #08399c;
+}
+
+.button_submit {
+    width: 94px;
+    color: antiquewhite;
+    background-color: #00b8ff; 
+    margin-left: -5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.Main_content {
+    padding-top: 60px;
+    padding-bottom: 35px;
+    padding-left: 15px;
+    padding-right: 15px;
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.Main_content.Main_content2 {
+    margin-top: 40px;
+}
+
+.main_title {
+    margin-bottom: 45px;
+}
+
+.main_title h1 {
+    color: #040744;
+    font-weight: 400;
+    font-size: 22px;
+}
+
+.main_title p {
+    font-weight: 300;
+    font-size: 15px;
+    color: #777;
+    padding: 6px 10%;
+    letter-spacing: 0.8px;
+}
+
+.box_feat#icon_1 {
+    background: url(https://www.booknmeet.com/img/BNM-INDIA-L-H1.svg) center 45px no-repeat #fff;
+    padding-bottom: 60px;
+}
+
+.box_feat {
+    background-color: #fff;
+    padding: 165px 45px 20px;
+    text-align: center;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 0 0 30px 0 rgba(0,0,0,.1);
+}
+
+.box_feat#icon_2 {
+    background: url(https://www.booknmeet.com/img/BNM-INDIA-L-H2.svg) center 45px no-repeat #fff;
+    padding-bottom: 40px;
+}
+
+.box_feat#icon_3 {
+    background: url(https://www.booknmeet.com/img/BNM-INDIA-L-H3.svg) center 45px no-repeat #fff;
+}
+
+.box_feat#icon_4 {
+    background: url(https://www.booknmeet.com/img/bnm/SIMPLYFY-BOOKNMEET-01.svg) center 45px no-repeat #fff;
+}
+
+.box_feat#icon_5 {
+    background: url(https://www.booknmeet.com/img/bnm/POWERFUl-BOOKNMEET-01.svg) center 45px 
+    no-repeat #fff;
+}
+
+.box_feat#icon_6 {
+    background: url(https://www.booknmeet.com/img/bnm/BOOKNMEET-QMM-01.svg) center 45px no-repeat #fff;
+}
+
+.box_feat h3 {
+    padding-top: 20px;
+    padding-bottom: 10px;
+    color: #00b8ff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.box_feat p {
+
+    text-align: justify;
+    letter-spacing: 0.8px;
+    color: rgb(85, 85, 85);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19.2px;
+}
+
+.Footer {
+
+}

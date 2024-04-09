@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+        <title>storein4 </title>
+</head>
+<body>
+    <div id="ADD">
+        <div>Add New Patient</div>
+    <input type="text" id="PATIENT_NAME" placeholder="Patient Name">
+    <input type="text" id="PHONE_NUMBER" placeholder="Phone Number">
+    <input type="text" id="CLINIC" list="CLINIC_LIST" placeholder="Choose a clinic">
+    <datalist id="CLINIC_LIST">
+        <option value="Ophthalmology">
+        <option value="Otorhinolaryngology">
+        <option value="Dermatology">
+        </option>
+    </datalist>
+    <div> <textarea id="HISTORY" placeholder="Medical Sistory" rows="4" cols="50"></textarea></div>
+    <div> <textarea id="DETAILS" placeholder="Status Of Patient" rows="4" cols="50"></textarea></div>
+    <div>Re-Examination Time</div>
+    <input type="date" id="RE-EXAMINATION" placeholder="Re-Examination Time">
+    <input type="text" id="LOCATION" list="location_list" placeholder="Location">
+    <datalist id="location_list">
+        <option value="H1">
+        <option value="H2">
+        <option value="H3">
+        </option>
+    </list>
+    <div> <textarea id="RESULT" placeholder="Test Result" rows="4" cols="50"></textarea></div>
+    </div>
+    <div><button onclick="addPatient()">addPatient</button></div>
+    <div id="find">
+        Find Patient In The PatientList
+    </div>
+    <input type="text" id="searchInput" placeholder="Find By Phone Number">
+    <input type="text" id="CLINIC2" list="CLINIC_LIST" placeholder="Choose a clinic">
+    <datalist id="CLINIC_LIST">
+        <option value="Ophthalmology">
+        <option value="Otorhinolaryngology">
+        <option value="Dermatology">
+        </option>
+    </datalist>
+        <button onclick="searchPatient()">FindPatient</button>
+    <div id="patientInfo"></div>
+   
+
+</body>
+  
+   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+   <script src="../index1.js"></script>
+<script>
+    function searchPatient(){
+    searchInput = document.getElementById('searchInput').value;
+    patientListRef = database.ref('patientList');
+    Clinic = document.getElementById("CLINIC2").value
+    database.ref('patientList/' + Clinic).orderByChild('Phone_Number').equalTo(searchInput).once('value')
+      .then((snapshot) => {
+        console.log(snapshot)
+        const patients = snapshot.val();
+        if (patients) {
+            //xóa thông tin của bệnh nhân trước đó 
+            const patientInfoDiv = document.getElementById('patientInfo');
+            patientInfoDiv.innerHTML = ''; // Xóa nội dung của phần tử
+
+            //tìm kiếm từng bệnh nhân
+            snapshot.forEach((childSnapshot) => {
+                const patient = childSnapshot.val(); 
+                const patientInfoDiv = document.getElementById('patientInfo');
+                const patientDiv = document.createElement('div');
+                patientDiv.innerHTML = `<p>Full_Name: ${patient.Full_Name}</p>
+                                        <p>Phone_Number: ${patient.Phone_Number}</p>
+                                        <p>Clinic: ${patient.Clicnic}</p>
+                                        <p>Status: ${patient.Status}</p>
+                                        <p>Location: ${patient.Location}</p>
+                                        <p>Time: ${patient.Time}</p>`;
+                patientInfoDiv.appendChild(patientDiv);
+                
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Chỉnh sửa';
+                editButton.addEventListener('click',()=>{
+                    editPatientInfo(childSnapshot.key, patient.Ho_va_ten, patient.SDT) 
+                }
+                
+                )
+                patientInfoDiv.appendChild(editButton);
+            });
+          
+       
+          console.log("Bệnh nhân được tìm thấy:");
+         
+          console.log(patients);
+        } 
+        else {
+          console.log("Không tìm thấy bệnh nhân có tên là");
+        }
+      })
+      .catch((error) => {
+        console.error("Lỗi khi tìm kiếm bệnh nhân:", error);
+      });
+  
+};
+function addPatient(){
+    FullName = document.getElementById('PATIENT_NAME').value
+    PhoneNumber = document.getElementById('PHONE_NUMBER').value
+    Clinic = document.getElementById("CLINIC").value
+    Status = document.getElementById("DETAILS").value
+    Time = document.getElementById("RE-EXAMINATION").value
+    locationToMeet = document.getElementById("LOCATION").value
+    MedicalHistory = document.getElementById("HISTORY").value
+    Result = document.getElementById("RESULT").value
+
+    var data = {
+        Full_Name : FullName,
+        Phone_Number : PhoneNumber,
+        Clicnic : Clinic,
+        Status : Status,
+        Time : Time,
+        Location : locationToMeet,
+        Medical_History : MedicalHistory,
+        Test_Result : Result
+    }
+    firebase.database().ref('patientList/' + Clinic + '/' + PhoneNumber).set(data)
+    .then(()=>{
+        console.log('Add Patient Successfully')
+    }
+    )
+}    
+
+
+   </script>
+</html>

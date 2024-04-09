@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Login </title>
+</head>
+<body>
+    <div id="test1">
+    <h2 id="form">Appointment List</h2>
+    <div id ='AppointmentList'>
+
+    </div>
+    <div id="appointment" >
+        Danh sách lịch đặt khám
+        <button onclick="AppointmentTable()">Booking</button>
+    </div>
+    <div id="bookingForm" style="display:none;">
+        <!-- Code của form đặt khám ở đây -->
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="../index1.js"></script>
+<script>
+
+let originalAppointmentContent = "";
+document.addEventListener('DOMContentLoaded', function(){
+    const appointmentDiv = document.getElementById('appointment')
+    originalAppointmentContent = appointmentDiv.innerHTML
+})
+
+
+function AppointmentTable(){
+    const appointmentTableBody = document.getElementById('appointment')
+    appointmentTableBody.innerHTML = "";
+
+    database.ref('Appointment').once('value') 
+    .then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        const appointment = childSnapshot.val();
+        const row = `
+          <tr>
+            <td>${appointment.Full_Name}</td>
+            <td>${appointment.Gender}</td>
+            <td>${appointment.Address}</td>
+            <td>${appointment.Health_insurance}</td>
+            <td>${appointment.Phone_number}</td>
+            <td>${appointment.Time}</td>
+            <br>
+            <!-- Add more columns as needed -->
+          </tr>
+        `;
+        appointmentTableBody.innerHTML += row;
+      });
+      const backButtonRow = `
+                    <tr>
+                        <td colspan="5">
+                            <button onclick="ShowBookingForm()">Quay lại</button>
+                        </td>
+                    </tr>
+  `;
+  appointmentTableBody.innerHTML += backButtonRow;
+    })
+    .catch((error) => {
+      console.error("Error loading appointments:", error);
+    });
+
+}
+function ShowBookingForm(){
+    const appointmentDiv = document.getElementById('appointment');
+    appointmentDiv.innerHTML = originalAppointmentContent;
+}
+</script>
+
+</html>
