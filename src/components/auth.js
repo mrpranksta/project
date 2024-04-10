@@ -12,7 +12,7 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { initializeApp, getApps } from "firebase/app";
-
+//*BI MAT QUOC GIA
 const firebaseConfig = {
     apiKey: "AIzaSyDioYAzvJooHpspr8Z58bImI0s2jaIRU90",
     authDomain: "testlogin-c11b6.firebaseapp.com",

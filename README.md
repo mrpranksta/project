@@ -1,18 +1,11 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
-
-First, run the development server:
-
+## CACH CHAY
 ```bash
+npm i
+#de cai dat cac thu muc library can thiet
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+#de chay len server
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
