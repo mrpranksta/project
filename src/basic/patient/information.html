@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Login </title>
+</head>
+<body>
+    <div id="test1">
+    <h2 id="form">Your Health Progess</h2>
+    </div>
+ 
+    Medical Sistory
+    <div> <textarea id="HISTORY" placeholder="Medical Sistory" rows="4" cols="50"></textarea></div>
+    Status Of Patient
+    <div> <textarea id="DETAILS" placeholder="Status Of Patient" rows="4" cols="50"></textarea></div>
+    Test Result
+    <div> <textarea id="RESULT" placeholder="Test Result" rows="4" cols="50"></textarea></div>
+          
+    </div>
+    
+
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="../index1.js"></script>
+<script>
+    firebase.auth().onAuthStateChanged(function(user) {
+       
+    if (user) {
+        // Người dùng đã đăng nhập
+        console.log("User is signed in");
+        console.log(user.uid)
+        BringInformation(user.uid)
+    } else {
+        // Người dùng chưa đăng nhập
+        console.log("User is signed out");
+    }
+});
+function BringInformation(userID){
+   
+    database.ref('Register/' + userID).once('value',function(snapshot){
+        PhoneNumber = snapshot.val().PhoneNumber
+        database.ref('patientList').once('value',function(snapshot){
+            console.log(snapshot.val())
+            snapshot.forEach((childSnapshot)=>{
+                console.log(childSnapshot.val())
+                childSnapshot.forEach((child2Snapshot) => {
+                    if(child2Snapshot.val().PhoneNumber == PhoneNumber){
+                    document.getElementById("HISTORY").value = child2Snapshot.val().MedicalHistory
+                    document.getElementById("DETAILS").value = child2Snapshot.val().Status
+                    document.getElementById("RESULT").value = child2Snapshot.val().TestResult
+
+                }
+                })
+                
+            })
+        })
+    })
+}
+            
+</script>
+
+</html>

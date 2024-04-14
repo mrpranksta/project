@@ -1,0 +1,83 @@
+ <!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>Login </title>
+    </head>
+    <body>
+        <div id="Tiltle">
+        <h2 id="form">Register</h2>
+        </div>
+        <div id = "register">
+            <input type="text" id="full_name" placeholder="Name">
+            <input type="text" id="phone_number" placeholder="Phone number">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Create Password">
+            <input type="password" id="confirm_password" placeholder="Confirm Password">
+            <button onclick="register()">Register</button>
+        </div>
+       
+    </body>
+  
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="index1.js"></script>
+    <script>
+        
+    async function register() {
+    FullName = document.getElementById('full_name').value
+    Email = document.getElementById('email').value
+    Password = document.getElementById('password').value
+    ConfirmPassword = document.getElementById('confirm_password').value
+    PhoneNumber = document.getElementById('phone_number').value
+ 
+    if(Password != ConfirmPassword){
+        alert('difference password')
+        return
+    }
+    if (valid_name(FullName) == false){
+    alert('invalid name')
+    return
+    }
+    if (valid_email(Email) == false || valid_password(password) == false){
+    alert('Email or Password is not valid')
+    return
+    }
+    auth.createUserWithEmailAndPassword(Email, Password)
+    
+        var user = auth.currentUser;
+        var database_ref = database.ref();
+        var userID = user.uid;
+
+    var user_data = { FullName, PhoneNumber, Email };
+
+    await database
+     .ref()
+     .child('Register/' + userID)
+     .set(user_data);
+   
+   
+}
+         document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+   });
+
+
+    function checkLoginStatus() {
+    
+        firebase.auth().onAuthStateChanged(async function(user) {
+            if (user) {
+                alert('Success')
+                
+                await register()
+                window.location.href = "index1.html";
+            } else {
+                console.log("No user is signed in.");
+            }
+        });
+     
+}
+       
+
+     </script>
+</html>

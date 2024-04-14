@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appointment Scheduler</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .input-field {
+        width: 90%;
+        margin: auto;
+    }
+    .date-select {
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+
+<h2>Appointment Scheduler</h2>
+<select id="clinicSelect" class="date-select">
+    <option value="">Select Clinic</option>
+    <option value="Ophthalmology">Ophthalmology</option>
+    <option value="Otorhinolaryngology">Otorhinolaryngology</option>
+    <option value="Dermatology">Dermatology</option>
+    <!-- Add more clinics as needed -->
+</select>
+<select id="weekSelect" class="date-select" style="display: none;">
+    <option value="">Select a Week</option>
+    <option value="week1">Week 1</option>
+    <option value="week2">Week 2</option>
+    <option value="week3">Week 3</option>
+    <option value="week4">Week 4</option>
+</select>
+<select id="dateSelect" class="date-select" style="display: none;">
+  <option value="">Select a Day</option>
+  <option value="Monday">Monday</option>
+  <option value="Tuesday">Tuesday</option>
+  <option value="Wednesday">Wednesday</option>
+  <option value="Thursday">Thursday</option>
+  <option value="Friday">Friday</option>
+  <!-- Add more days as needed -->
+</select>
+
+<div id="scheduleContainer" style="display: none;">
+  <table id="scheduleTable">
+    <tr>
+      <th>Time Slot</th>
+      <th>Doctor 1</th>
+      <th>Doctor 2</th>
+      <th>Doctor 3</th>
+      <!-- Add more doctors as needed -->
+    </tr>
+    <tr>
+      <td>8:00 AM - 10:00 AM</td>
+      <td><input type="text" class="input-field"></td>
+      <td><input type="text" class="input-field"></td>
+      <td><input type="text" class="input-field"></td>
+    </tr>
+    <tr>
+      <td>1:00 PM - 3:00 PM</td>
+      <td><input type="text" class="input-field"></td>
+      <td><input type="text" class="input-field"></td>
+      <td><input type="text" class="input-field"></td>
+    </tr>
+    <tr>
+      <td>3:00 PM - 5:00 PM</td>
+      <td><input type="text" class="input-field"></td>
+      <td><input type="text" class="input-field"></td>
+      <td><input type="text" class="input-field"></td>
+    </tr>
+    <!-- Add more time slots as needed -->
+  </table>
+</div>
+<div id="saveButtonContainer" style="display: none;"><button onclick="Save()">Save List</button></div>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="../index1.js"></script>
+<script>
+
+let initialTimeSlots = []; // Mảng để lưu trữ các giá trị ban đầu của timeSlot
+
+// Lưu các giá trị ban đầu của timeSlot
+document.addEventListener("DOMContentLoaded", function() {
+    let tableRows = document.getElementById("scheduleTable").rows;
+    for (let i = 1; i < tableRows.length; i++) {
+        initialTimeSlots.push(tableRows[i].cells[0].innerText);
+    }
+});
+
+document.getElementById("clinicSelect").addEventListener("change", function() {
+    let selectedClinic = this.value;
+    let weekSelect = document.getElementById("weekSelect");
+    let dateSelect = document.getElementById("dateSelect");
+    let scheduleContainer = document.getElementById("scheduleContainer");
+    let saveButtonContainer = document.getElementById("saveButtonContainer");
+
+    if (selectedClinic !== "") {
+        // Lấy thời gian hiện tại
+var currentDate = new Date();
+
+// Sử dụng hàm để lấy số tuần từ thời gian hiện tại
+var weekNumber = getWeekNumber(currentDate);
+console.log("Tuần của thời gian hiện tại là tuần " + weekNumber);
+        weekSelect.style.display = "block"; // Hiển thị phần chọn tuần
+        dateSelect.style.display = "none"; // Ẩn phần chọn ngày
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+    } else {
+        weekSelect.style.display = "none"; // Ẩn phần chọn tuần
+        dateSelect.style.display = "none"; // Ẩn phần chọn ngày
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+    }
+});
+
+document.getElementById("weekSelect").addEventListener("change", function() {
+    let selectedWeek = this.value;
+    let dateSelect = document.getElementById("dateSelect");
+    let scheduleContainer = document.getElementById("scheduleContainer");
+    let saveButtonContainer = document.getElementById("saveButtonContainer");
+
+    if (selectedWeek !== "") {
+        dateSelect.style.display = "block"; // Hiển thị phần chọn ngày
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+    } else {
+        dateSelect.style.display = "none"; // Ẩn phần chọn ngày
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+    }
+});
+
+document.getElementById("dateSelect").addEventListener("change", function() {
+    let selectedDay = this.value;
+    let scheduleContainer = document.getElementById("scheduleContainer");
+    let saveButtonContainer = document.getElementById("saveButtonContainer");
+
+    if (selectedDay !== "") {
+        scheduleContainer.style.display = "block"; // Hiển thị bảng lịch hẹn khi chọn ngày
+        saveButtonContainer.style.display = "block"; // Hiển thị nút "Save List"
+        updateSchedule(selectedDay);
+    } else {
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn khi không chọn ngày
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+    }
+});
+
+function updateSchedule(selectedDay) {
+    let tableRows = document.getElementById("scheduleTable").rows;
+
+    for (let i = 1; i < tableRows.length; i++) {
+        let timeSlot = initialTimeSlots[i - 1]; // Sử dụng giá trị ban đầu của timeSlot
+        let timeRange = getTimeRange(selectedDay, timeSlot);
+        tableRows[i].cells[0].innerText = timeRange;
+    }
+}
+function getWeekNumber(date) {
+    // Tính toán thứ của ngày 1/1 của năm hiện tại
+    var startOfYear = new Date(date.getFullYear(), 0, 1);
+    var dayOfWeek = startOfYear.getDay();
+    
+    // Tính toán ngày đầu tiên của tuần đầu tiên trong năm
+    var firstWeekStartDate = startOfYear;
+    if (dayOfWeek > 0) {
+        firstWeekStartDate.setDate(1 + (7 - dayOfWeek));
+    }
+
+    // Tính toán số ngày giữa ngày 1/1 và ngày hiện tại
+    var differenceInDays = Math.floor((date - firstWeekStartDate) / (24 * 60 * 60 * 1000));
+    
+    // Tính toán số tuần dựa trên số ngày tính được
+    var weekNumber = Math.ceil((differenceInDays + 1) / 7);
+
+    return weekNumber;
+}
+function getTimeRange(day, timeSlot) {
+    let timeRanges = {
+        "Monday": {
+            "8:00 AM - 10:00 AM" : "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM" : "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM" : "3:00 PM - 5:00 PM"
+        },
+        "Tuesday": {
+            "8:00 AM - 10:00 AM" : "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM" : "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM" : "3:00 PM - 5:00 PM"
+        },
+        "Wednesday": {
+            "8:00 AM - 10:00 AM" : "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM" : "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM" : "3:00 PM - 5:00 PM"
+        },
+        "Thursday": {
+            "8:00 AM - 10:00 AM" : "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM" : "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM" : "3:00 PM - 5:00 PM"
+        },
+        "Friday": {
+            "8:00 AM - 10:00 AM" : "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM" : "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM" : "3:00 PM - 5:00 PM"
+        },
+        // Add more days and time ranges as needed
+    };
+
+    return timeRanges[day][timeSlot];
+}
+
+function Save(){
+    let tableRows = document.getElementById("scheduleTable").rows;
+
+    for (let i = 1; i < tableRows.length; i++) {
+        let timeSlot = initialTimeSlots[i - 1];
+        let doctor1 = tableRows[i].cells[1].querySelector("input").value;
+        let doctor2 = tableRows[i].cells[2].querySelector("input").value;
+        let doctor3 = tableRows[i].cells[3].querySelector("input").value;
+
+        let appointment = {
+            doctor1: doctor1,
+            doctor2: doctor2,
+            doctor3: doctor3
+        };
+
+        // Sử dụng thứ làm phần của đường dẫn trong cơ sở dữ liệu Firebase
+        let selectedClinic = document.getElementById("clinicSelect").value
+        let selectedDay = document.getElementById("dateSelect").value;
+        let selectedWeek = document.getElementById("weekSelect").value;
+        firebase.database().ref("AppointmentWithDoctor/" + selectedClinic + "/"+selectedWeek + "/"+ selectedDay + "/" + timeSlot).set(appointment)
+            .then(() => {
+                console.log("Dữ liệu đã được lưu vào cơ sở dữ liệu Firebase!");
+            })
+            .catch((error) => {
+                console.error("Lỗi khi lưu dữ liệu vào cơ sở dữ liệu Firebase:", error);
+            });
+    }
+}
+
+</script>
+
+</body>
+</html>

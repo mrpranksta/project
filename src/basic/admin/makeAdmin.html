@@ -10,13 +10,13 @@
     <div id = "createAdmin">
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
-        <input type="text" id="phone_number" placeholder="PhoneNumber">
+        <input type="text" id="phone_number" placeholder="Phone Number">
         <input type="text" id="role" list="role_list" placeholder="Role">
         <datalist id="role_list">
             <option value="doctor">
             <option value="assist">
             <option value="admin">
-
+            <option value="nurse">
             </option>
         
         </datalist>
@@ -38,7 +38,6 @@
  
     var data = {
         Email : email,
-        Password : password,
         PhoneNumber : phoneNumber,
         Role : role,
     }
@@ -46,19 +45,63 @@
     if(role == "doctor"){
         firebase.database().ref('doctorAccount/' + phoneNumber).set(data)
         .then(()=>{
+        auth.createUserWithEmailAndPassword(email, password)
+        var database_ref = database.ref()
+        var userID = phoneNumber
+
+        var user_data = {
+        Email : email,
+        PhoneNumber : phoneNumber,
+        
+    }
+
+        firebase.database().ref('Register/' + userID).set(user_data)
         console.log('Add doctor success')
+        
         }
     )}
     else if(role == "assist"){
         firebase.database().ref('assistAccount/' + phoneNumber).set(data)
         .then(() => {
+            auth.createUserWithEmailAndPassword(email, password)
+        var database_ref = database.ref()
+        var userID = phoneNumber
+
+        var user_data = {
+        Email : email,
+        PhoneNumber : phoneNumber,
+        
+    }
             console.log('Add assist success')
         })
     }
     else if(role == "admin"){
         firebase.database().ref('adminAccount/' + phoneNumber).set(data)
         .then(() => {
+            auth.createUserWithEmailAndPassword(email, password)
+        var database_ref = database.ref()
+        var userID = phoneNumber
+
+        var user_data = {
+        Email : email,
+        PhoneNumber : phoneNumber,
+        
+    }
             console.log('Add addmin success')
+        })
+    } else {
+        firebase.database().ref('nurseAccount/' + phoneNumber).set(data)
+        .then(() => {
+            auth.createUserWithEmailAndPassword(email, password)
+        var database_ref = database.ref()
+        var userID = phoneNumber
+
+        var user_data = {
+        Email : email,
+        PhoneNumber : phoneNumber,
+        
+    }
+            console.log('Add nurse success')
         })
     }
     

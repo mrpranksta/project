@@ -22,22 +22,22 @@
 <script>
     function login(){
 
-email = document.getElementById('email').value 
-password = document.getElementById('password').value
+Email = document.getElementById('email').value 
+Password = document.getElementById('password').value
 
 
-if (valid_email(email) == false || valid_password == false){
+if (valid_email(Email) == false || valid_password == false){
     alert('Email or Password is not valid')
     return
 }
 
-auth.signInWithEmailAndPassword(email, password)
+auth.signInWithEmailAndPassword(Email, Password)
 .then( function(){
-    database.ref('Register').orderByChild('email').equalTo(email).once('value')
+    database.ref('Register').orderByChild('Email').equalTo(Email).once('value')
     .then((snapshot) => {
     
         snapshot.forEach((childSnapshot) => {
-            userID = childSnapshot.val().phone_number
+            userID = childSnapshot.val().PhoneNumber
             
             var database_ref = database.ref()
         

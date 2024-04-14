@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Login </title>
+    </head>
+    <body>   
+       <div>Save Medicine To Database</div> 
+        <input type="text" id="specialist" list="CLINIC_LIST" placeholder="Choose a clinic">
+        <datalist id="CLINIC_LIST">
+            <option value="Ophthalmology">
+            <option value="Otorhinolaryngology">
+            <option value="Dermatology">
+            </option>
+        </datalist>
+        <div id="medicineInfor" style="display: none;">
+            <div>Medicine Name
+               <div> <input type="text" id="medicineName" placeholder="Name"></div>
+            </div>
+            <div>Quantity
+                <div><input type="number" id="quantity" placeholder="Quantity"></div>
+            </div>
+            <div>Expire Date
+                <div><input type="date" id="expire" placeholder="Expire"></div>
+            </div>
+            <button onclick="submitMedicine()">Update</button>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+        <script src="../index1.js"></script>
+        <script>
+            document.getElementById("specialist").addEventListener('change',function(){
+                MedicineInforDiv = document.getElementById("medicineInfor")
+                MedicineInforDiv.style.display = 'block'
+            })
+            function submitMedicine(){
+              Name = document.getElementById("medicineName").value 
+              Quantity = document.getElementById("number").value
+              Expire = document.getElementById("date").value
+              console.log(Name)
+            }
+                
+                firebase.auth().onAuthStateChanged(async function(user) {
+                    if (user) {
+                        console.log('user signed in')
+                    } 
+                    else {
+                        console.log('user is not')
+                    }
+                }
+                )
+    
+        </script>
+ 
+    </body>
+        
+</html>

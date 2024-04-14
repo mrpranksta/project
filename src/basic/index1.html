@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Login </title>
+    </head>
+    <body>
+        <div id ="HOME">
+            <a href="index1.html">Home</a>
+        </div>
+        <div id ="LOGIN">
+            <a href="login.html" >Login</a>
+        </div>
+        <div id ="REGISTER">
+            <a href="register.html">Register</a>
+        </div>
+        <div id = "SET_APPOINTMENT">
+            <a href="setAppointment.html">Set Appointment</a>
+        </div>
+        <div id = "INFO"> 
+            <a href="patient/information.html"> Personal Information </a>
+        </div>
+        <div id = "functionForStaff">
+           
+        </div>
+        <div id = "LOGOUT">
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+        <script src="index1.js"></script>
+        <script>
+//Khi trang web load, thi kiem tra trang thai dang nhap
+          
+            document.addEventListener('DOMContentLoaded', function(){
+                checkLoginStatus()
+            })
+            function checkLoginStatus(){       
+                    
+                    firebase.auth().onAuthStateChanged(async function(user) {
+                    if (user) {
+                        
+
+                    console.log("User is signd in")
+                    const isHaveToken = localStorage.getItem('customToken')
+                    //console.log(isHaveToken)
+                    
+                    localStorage.setItem('userID',user.uid)
+                    if (isHaveToken) {
+                    console.log('Token tồn tại')
+                    try {
+                        await firebase.auth().signInWithCustomToken(isHaveToken);
+                        const idTokenResult = await firebase.auth().currentUser.getIdTokenResult();
+                        const idToken = idTokenResult.token;
+
+                        fetch('../api/html', {
+                        method: 'GET',
+                        headers: {
+                        'Authorization': `Bearer ${idToken}`
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const renderContainer = document.getElementById('functionForStaff');
+                        renderContainer.innerHTML = html;
+                    })
+                .catch(error => {
+                    console.log('Lỗi khi gọi API: ', error);
+                });
+            }   catch (error) {
+                console.log('Lỗi khi đăng nhập bằng token:', error);
+                localStorage.removeItem('customToken');
+                console.log('localStorage đã được xóa vì token không hợp lệ');
+                logout();
+            }
+        }    
+
+                else {
+                console.log('Token khong ton tai')
+                }
+                    document.getElementById("LOGIN").style.display = "none"
+                    document.getElementById("REGISTER").style.display = "none"
+                    document.getElementById("SET_APPOINTMENT").style.display = "block"
+                    document.getElementById("INFO").style.display = "block"
+            const userEmail = user.email
+            
+        try{
+        const response = await fetch('../api/login', {
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userEmail })
+        })
+        
+        if (response.ok){
+            const token = await response.text();
+            localStorage.setItem('customToken',token)
+            console.log("Token nhận được thành công ", token)
+            firebase.auth().signInWithCustomToken(token)
+            .then(()=>{
+                firebase.auth().currentUser.getIdTokenResult()
+                .then((idTokenResult) => {
+                    const idToken = idTokenResult.token
+                    fetch('../api/html', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const renderCotainer = document.getElementById('functionForStaff');
+                renderCotainer.innerHTML = html;
+            })
+            .catch(error =>{
+                console.log('Loi ja', error)
+            })
+                })
+            })
+            
+
+
+        } 
+       } catch(error){
+        console.error('Lỗi khi gửi yêu cầu', error)
+       }
+
+   } else { 
+       console.log("No user is signed in.");
+       document.getElementById("LOGIN").style.display = "block"
+       document.getElementById("REGISTER").style.display = "block"
+       document.getElementById("SET_APPOINTMENT").style.display = "none"
+       document.getElementById("INFO").style.display = "none"
+   }
+    }); 
+                
+            
+               
+            }
+            
+        </script>
+    </body>
+        
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Login </title>
+</head>
+<body>
+    <div id="test1">
+    <h2 id="form">Your Health Progess</h2>
+    </div>
+    <textarea id="statusToDoctor" placeholder="How Do You Feel Today?" rows="4" cols="50"></textarea>
+
+        
+           
+    </div>
+    
+    <div id="button_cointer">
+        <button onclick="setAppointment()">Send To Doctor</button>
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="index1.js"></script>
+<script>
+    firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        // Người dùng đã đăng nhập
+        console.log("User is signed in");
+    } else {
+        // Người dùng chưa đăng nhập
+        console.log("User is signed out");
+    }
+});
+     document.addEventListener('DOMContentLoaded', function(){
+                checkLoginStatus()
+            })
+            function checkLoginStatus(){
+                if(user){
+                    console.log('hi')
+                }
+            }
+</script>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Login </title>
+</head>
+<body>
+    <div id="test1">
+    <h2 id="form">Set Appointment</h2>
+    </div>
+        <input type="text" id="full_name21" placeholder="Full name">
+        <input type="text" id="gender" placeholder="Gender">
+        <input type="text" id="age" placeholder="Age">
+        <input type="text" id="number" placeholder="Phone Number">
+        <input type="text" id="address" placeholder="Address">
+    <div id="book">
+        <!-- <input type="text" id="bhyt" placeholder="Health Insurance"> -->
+        <label for="bhyt">Health Insurance:</label>
+        <select id="bhyt">
+        <option value="Select">Yes/No</option>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+        </select>
+        <div><input type="text" id="numberHI" placeholder="Health Insurance Number" style="display: none;"> <div></div>
+        <input type="text" id="khoa" list="khoalist" placeholder="Choose Clinic">
+        <datalist id="khoalist">
+            <option value="Ophthalmology">
+            <option value="Otorhinolaryngology">
+            <option value="Dermatology">
+            </option>
+        </datalist>
+        <input type="text" id="time" list ="timeList" placeholder="Select Appointment Time">
+        <datalist id="timeList">
+            <option value ="8:00 AM - 10:00 AM">
+            <option value ="1:00 PM - 3:00 PM">
+            <option value ="3:00 PM - 5:00 PM">
+            </option>
+        </datalist>
+    </div>
+        <div>
+            <input type ="date" id="date" placeholder="Date">
+        </div>
+    
+    <div id="button_cointer">
+        <button onclick="setAppointment()">Submit</button>
+    </div>
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="index1.js"></script>
+
+
+<script>
+document.getElementById("bhyt").addEventListener('change', function(){
+    if (document.getElementById('bhyt').value === 'yes'){
+        document.getElementById('numberHI').style.display = "block"
+    } else if (document.getElementById('bhyt').value === 'no') {
+        document.getElementById('numberHI').style.display = "none"
+    }
+})
+function setAppointment(){
+    
+
+  fullName = document.getElementById('full_name21').value
+  gender = document.getElementById('gender').value
+  age = document.getElementById('age').value
+  phoneNumber = document.getElementById('number').value
+  address = document.getElementById('address').value
+  bhyt = document.getElementById('bhyt').value
+  khoa = document.getElementById('khoa').value 
+  time = document.getElementById('time').value
+  date = document.getElementById('date').value
+  numberHI = document.getElementById('numberHI').value
+
+  database.ref('doctorList/' + khoa).once('value', function(doctorSnapshot) {
+    const NumberDoctor = doctorSnapshot.numChildren();
+    
+
+    const conditions = [
+        {name: "Clinic", value: khoa},
+        {name: "Date", value: date},
+        {name: "Time", value: time}
+    ];
+
+    let query = database.ref('Appointment');
+    
+    // Thêm orderByChild cho trường Clinic
+    query = query.orderByChild('Clinic').equalTo(khoa);
+
+    query.once('value', function(appointmentSnapshot) {
+        const appointments = appointmentSnapshot.val();
+        console.log(appointments)
+        let count = 0;
+        if (appointments) {
+            // Kiểm tra cả trường Clinic và Date cùng một lúc
+            Object.keys(appointments).forEach(key => {
+                const appointment = appointments[key];
+                if (appointment.Date === date && appointment.Time == time ) {
+                    count++;
+                }
+            });
+        }
+        console.log("Number of appointments in the clinic and date: " + count);
+        console.log("Number of doctors in the clinic: " + NumberDoctor);
+        if(count === NumberDoctor){
+            console.log('full')
+            return
+        } else {
+            console.log("success")
+            var data = {
+      FullName: fullName,
+      Gender: gender,
+      Age: age,
+      PhoneNumber: phoneNumber,
+      Address: address,
+      Clinic: khoa,
+      HealthInsurance: bhyt,
+      NumberHealthInsurance: numberHI,
+      Time: time,
+      Date: date
+      
+  }
+  firebase.database().ref('Appointment/'+ phoneNumber).update(data)
+  .then(()=>{
+      alert('Submit successfully')
+  }
+
+  )
+        }
+    });
+}, function(error) {
+    console.error("Error fetching doctors:", error);
+});
+
+
+
+  
+}
+function logout(){
+    firebase.auth().signOut().then(function(){
+        console.log("User signed out")
+    }).catch(function(error){
+        console.error("Error signing out", error)
+})
+}
+
+</script>
+
+</html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Login </title>
+    <style>
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+      }
+      th, td {
+          border: 1px solid #dddddd;
+          padding: 8px;
+          text-align: left;
+      }
+      th {
+          background-color: #f2f2f2;
+      }
+      tr:hover {
+          background-color: #f5f5f5;
+      }
+      button {
+          padding: 10px 20px;
+          background-color: #4CAF50;
+          color: white;
+          border: none;
+          cursor: pointer;
+          border-radius: 5px;
+      }
+      button:hover {
+          background-color: #45a049;
+      }
+  </style>
+</head>
+<body>
+  <span id="weekNumberDisplay"></span>
+    <div id="test1">
+    <h2 id="form">Appointment List</h2>
+    <div id ='AppointmentList'>
+      <table id="appointmentTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Gender</th>
+                <th>Address</th>
+                <th>Health Insurance</th>
+                <th>Number Health Insurance</th>
+                <th>Phone Number</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Clinic</th>
+                
+            </tr>
+        </thead>
+        <tbody id="appointmentTableBody">
+            <!-- Appointment rows will be inserted here -->
+        </tbody>
+    </table>
+    </div>
+    <div id="appointment" >
+        Danh sách lịch đặt khám
+        <button onclick="AppointmentTable()">Booking</button>
+    </div>
+    <div id="bookingForm" style="display:none;">
+        <!-- Code của form đặt khám ở đây -->
+    </div>
+    <div id ='delete_appointment'>
+      <div>Delete list</div>
+      <input type="text" id="searchInput" placeholder="Delete By Phone Number">
+      <button onclick="deleteList()">Delete List</button>   
+    </div>
+    <h2 id="sc">Appointment Scheduler</h2>
+    <input type="text" id="dateConvert" placeholder="Convert To Week Number">
+    <div id="convert"><button onclick="getWeekNumberFromDate()">Convert</button></div>
+    <div id="displayConver"></div>
+</body>
+<select id="clinicSelect" class="clinic-select">
+  <option value="">Select Clinic</option>
+  <option value="Ophthalmology">Ophthalmology</option>
+  <option value="Otorhinolaryngology">Otorhinolaryngology</option>
+  <option value="Dermatology">Dermatology</option>
+</select>   
+<select id="weekSelect" class="week-select " style="display: none;">
+<option value="">Select a Week</option>
+</select>
+<select id="dateSelect" class="date-select" style="display: none;">
+<option value="">Select a Day</option>
+<option value="Monday">Monday</option>
+<option value="Tuesday">Tuesday</option>
+<option value="Wednesday">Wednesday</option>
+<option value="Thursday">Thursday</option>
+<option value="Friday">Friday</option>
+</select>
+
+<div id="scheduleContainer" style="display: none;">
+<table id="scheduleTable">
+  <tr id="doctorRow">
+    <th>Time Slot</th>
+
+  </tr>
+
+  </tr>
+</table>
+</div>
+<div id="saveButtonContainer" style="display: none;"><button onclick="Save()">Save List</button></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="../index1.js"></script>
+<script>
+
+var currentDate = new Date();
+var weekNumber = getWeekNumber(currentDate);
+document.getElementById('weekNumberDisplay').innerText = "Tuần của thời gian hiện tại là tuần " + weekNumber;
+function getWeekNumber(date) {
+    // Tính toán thứ của ngày 1/1 của năm hiện tại
+    var startOfYear = new Date(date.getFullYear(), 0, 1);
+    var dayOfWeek = startOfYear.getDay();
+    
+    // Tính toán ngày đầu tiên của tuần đầu tiên trong năm
+    var firstWeekStartDate = startOfYear;
+    if (dayOfWeek > 0) {
+        firstWeekStartDate.setDate(1 + (7 - dayOfWeek));
+    }
+
+    // Tính toán số ngày giữa ngày 1/1 và ngày hiện tại
+    var differenceInDays = Math.floor((date - firstWeekStartDate) / (24 * 60 * 60 * 1000));
+    
+    // Tính toán số tuần dựa trên số ngày tính được
+    var weekNumber = Math.ceil((differenceInDays + 1) / 7);
+
+    return weekNumber;
+}
+function getWeekNumberFromDate() {
+  inputDate = document.getElementById('dateConvert').value
+    // Tách ngày, tháng và năm từ chuỗi đầu vào
+    var dateParts = inputDate.split('/');
+    var day = parseInt(dateParts[0]);
+    var month = parseInt(dateParts[1]);
+    var year = parseInt(dateParts[2]);
+
+    // Tạo một đối tượng Date từ ngày/tháng/năm được cung cấp
+    var date = new Date(year, month - 1, day);
+
+    // Tính toán thứ của ngày 1/1 của năm hiện tại
+    var startOfYear = new Date(date.getFullYear(), 0, 1);
+    var dayOfWeek = startOfYear.getDay();
+    
+    // Tính toán ngày đầu tiên của tuần đầu tiên trong năm
+    var firstWeekStartDate = startOfYear;
+    if (dayOfWeek > 0) {
+        firstWeekStartDate.setDate(1 + (7 - dayOfWeek));
+    }
+
+    // Tính toán số ngày giữa ngày 1/1 và ngày hiện tại
+    var differenceInDays = Math.floor((date - firstWeekStartDate) / (24 * 60 * 60 * 1000));
+
+    // Tính toán số tuần dựa trên số ngày tính được
+    var weekNumber = Math.floor(differenceInDays / 7) + 1;
+    document.getElementById('displayConver').innerText = "Week " + weekNumber;
+}
+let initialTableContent = document.getElementById('scheduleTable').innerHTML;
+
+var weekOptions = '';
+for (var i = 1; i <= 52; i++) {
+    weekOptions += '<option value="Week' + i + '">Week ' + i + '</option>';
+}
+document.getElementById('weekSelect').innerHTML = weekOptions;
+
+document.getElementById("clinicSelect").addEventListener("change", function(){
+  let selectedClinic = this.value
+  let weekSelect = document.getElementById("weekSelect")
+  let dateSelect = document.getElementById("dateSelect")
+  let scheduleContainer = document.getElementById("scheduleContainer");
+  let saveButtonContainer = document.getElementById("saveButtonContainer");
+
+if (selectedClinic !== ""){
+      weekSelect.style.display = "block"
+      dateSelect.style.display = "none"
+      scheduleContainer.style.display = "none"
+      saveButtonContainer.style.display = "none"
+} else {
+        weekSelect.style.display = "none"; 
+        dateSelect.style.display = "none"; 
+        scheduleContainer.style.display = "none"; 
+        saveButtonContainer.style.display = "none"; 
+    }
+
+})
+
+document.getElementById("weekSelect").addEventListener("change", function(){
+  let selectedWeek = this.value
+  let dateSelect = document.getElementById("dateSelect")
+  let scheduleContainer = document.getElementById("scheduleContainer")
+  let saveButtonContainer = document.getElementById("saveButtonContainer")
+
+  if(selectedWeek !== ""){
+        dateSelect.style.display = "block"; // Hiển thị phần chọn ngày
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+  } else {
+        dateSelect.style.display = "block"; // Hiển thị phần chọn ngày
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+  }
+})
+
+document.getElementById("dateSelect").addEventListener("change", function() {
+    let selectedDay = this.value;
+    let scheduleContainer = document.getElementById("scheduleContainer");
+    let saveButtonContainer = document.getElementById("saveButtonContainer");
+
+    if (selectedDay !== "") {
+        scheduleContainer.style.display = "block"; // Hiển thị bảng lịch hẹn khi chọn ngày
+        saveButtonContainer.style.display = "block"; // Hiển thị nút "Save List"
+        Clinic = document.getElementById("clinicSelect").value
+        Week = document.getElementById('weekSelect').value
+        Day = document.getElementById("dateSelect").value
+     
+        let scheduleTable = document.getElementById('scheduleTable');
+
+    
+    showDoctorName()
+    PopulateTableFromFirebase()
+   
+  } else {
+        scheduleContainer.style.display = "none"; // Ẩn bảng lịch hẹn khi không chọn ngày
+        saveButtonContainer.style.display = "none"; // Ẩn nút "Save List"
+    }
+});
+function showDoctorName() {
+  
+  let Clinic = document.getElementById("clinicSelect").value;
+  document.getElementById('scheduleTable').innerHTML = initialTableContent;
+  // Lấy số lượng bác sĩ từ cơ sở dữ liệu hoặc sử dụng một số cố định
+  let numberOfDoctor = 0;
+
+  // Lấy số lượng time slot từ form hoặc sử dụng một số cố định
+  let timeSlots = [
+    "8:00 AM - 10:00 AM",
+    "1:00 PM - 3:00 PM",
+    "3:00 PM - 5:00 PM"
+  ];
+
+  // Lặp qua từng hàng thời gian và thêm ô input cho mỗi bác sĩ
+  timeSlots.forEach(function(timeSlot) {
+    let tr = document.createElement('tr');
+    let timeSlotTd = document.createElement('td');
+    timeSlotTd.textContent = timeSlot;
+    tr.appendChild(timeSlotTd);
+    // document.getElementById('scheduleTable').appendChild(tr) = ''
+    // Lặp qua từng bác sĩ và thêm ô nhập input cho mỗi bác sĩ
+    database.ref('doctorList/' + Clinic).once('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        let doctorFullName = childSnapshot.val().Full_Name;
+        let doctorId = 'doctor' + childSnapshot.key;
+        
+        // // Tạo thẻ <td> mới
+         let doctorTd = document.createElement('td');
+        
+        // Tạo input mới
+        let input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'input-field';
+        
+        // Thêm input vào thẻ <td>
+        doctorTd.appendChild(input);
+        
+        // // Thêm thẻ <td> vào hàng 'tr'
+          tr.appendChild(doctorTd);
+        
+        // // Nếu cần, bạn có thể thêm tên của bác sĩ vào cột thích hợp
+         if (timeSlot === "8:00 AM - 10:00 AM") {
+           let doctorTh = document.getElementById(doctorId);
+           if (!doctorTh) { // Chỉ tạo thẻ <th> mới nếu chưa tồn tại
+             doctorTh = document.createElement('th');
+             doctorTh.id = doctorId;
+             doctorTh.innerText = doctorFullName;
+             document.getElementById('doctorRow').appendChild(doctorTh);
+           }
+         }
+      });
+    });
+
+    document.getElementById('scheduleTable').appendChild(tr);
+    
+   
+  });
+}
+let tableRows = document.getElementById("scheduleTable").rows;
+let doctors = {}; // Sử dụng object thay vì mảng để lưu trữ tên bác sĩ với key là index
+let initialTimeSlots = [
+    "8:00 AM - 10:00 AM",
+    "1:00 PM - 3:00 PM",
+    "3:00 PM - 5:00 PM"
+  ];
+
+function fetchDataFromFirebase(selectedClinic, selectedWeek, selectedDay) {
+    return new Promise((resolve, reject) => {
+        firebase.database().ref("AppointmentWithDoctor/" + selectedClinic + "/" + selectedWeek + "/" + selectedDay).once('value')
+            .then(snapshot => {
+                const appointments = snapshot.val();
+                //console.log(appointments)
+                resolve(appointments);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    });
+}
+
+async function PopulateTableFromFirebase() {
+  
+    try {
+        let selectedClinic = document.getElementById("clinicSelect").value;
+        let selectedDay = document.getElementById("dateSelect").value;
+        let selectedWeek = document.getElementById("weekSelect").value;
+        await fetchDoctors(selectedClinic);
+        const appointments = await fetchDataFromFirebase(selectedClinic, selectedWeek, selectedDay);
+
+        // Lặp qua mỗi dòng trong bảng
+        for (let i = 1; i < tableRows.length; i++) {
+            let timeSlot = initialTimeSlots[i - 1];
+            let rowCells = tableRows[i].cells;
+
+            // Lấy dữ liệu cuộc hẹn cho từng ô trong hàng
+            let appointmentData = appointments[timeSlot];
+           // console.log(appointmentData)
+            if (appointmentData) {
+                for (let j = 1; j < rowCells.length; j++) {
+                  console.log(doctors[rowCells.length-j])
+                  rowCells[j].querySelector('input').value = appointmentData[doctors[j]]
+                }
+            }
+        }
+
+        console.log("Dữ liệu từ cơ sở dữ liệu Firebase đã được hiển thị trên bảng thành công!");
+    } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu từ cơ sở dữ liệu Firebase:", error);
+    }
+}
+
+function fetchDoctors(selectedClinic) {
+  return new Promise((resolve, reject) => {
+    database.ref('doctorList/' + selectedClinic).once('value')
+      .then(snapshot => {
+        let i = 0;
+        snapshot.forEach(childSnapshot => {
+          i++;
+          doctors[i] = childSnapshot.val().Full_Name;
+        });
+        resolve(); // Gọi resolve() khi đã lấy xong dữ liệu từ Firebase
+      })
+      .catch(error => {
+        reject(error); // Trả về lỗi nếu có lỗi xảy ra trong quá trình lấy dữ liệu
+      });
+  });
+}
+async function Save() {
+
+  try {
+    let selectedClinic = document.getElementById("clinicSelect").value;
+    await fetchDoctors(selectedClinic); // Chờ cho dữ liệu từ Firebase được lấy xong
+
+    let selectedDay = document.getElementById("dateSelect").value;
+    let selectedWeek = document.getElementById("weekSelect").value;
+    let appointments = {}; // Mảng chứa thông tin của tất cả các cuộc hẹn
+
+    for (let i = 1; i < tableRows.length; i++) {
+      let timeSlot = initialTimeSlots[i - 1];
+      let doctorsData = []; // Mảng chứa thông tin của các bác sĩ cho thời gian hiện tại
+
+      // Lặp qua từng ô trong hàng hiện tại để lấy dữ liệu của các bác sĩ
+      let rowCells = tableRows[i].cells;
+      for (let j = 1; j < rowCells.length; j++) {
+        let doctorInput = rowCells[j].querySelector('input');
+        if (doctorInput) {
+          //console.log(doctors[j])
+          doctorsData[doctors[j]] = doctorInput.value;
+        }
+      }
+
+      // Tạo đối tượng bác sĩ với tên bác sĩ và lưu vào mảng
+      appointments[timeSlot] = doctorsData;
+    }
+
+    // Lưu mảng thông tin cuộc hẹn vào cơ sở dữ liệu Firebase
+    firebase.database().ref("AppointmentWithDoctor/" + selectedClinic + "/" + selectedWeek + "/" + selectedDay).set(appointments)
+      .then(() => {
+        console.log("Dữ liệu đã được lưu vào cơ sở dữ liệu Firebase!");
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lưu dữ liệu vào cơ sở dữ liệu Firebase:", error);
+      });
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu từ cơ sở dữ liệu Firebase:", error);
+  }
+}
+function deleteList(){
+  PhoneNumber = document.getElementById("searchInput").value 
+  database.ref('Appointment').orderByChild('PhoneNumber').equalTo(PhoneNumber).once('value')
+  .then((snapshot)=>{
+    database.ref('Appointment/' + PhoneNumber).remove()
+    console.log('delete success')
+    AppointmentTable()
+  })
+}
+function AppointmentTable(){
+  document.getElementById('appointmentTable').style.display = 'block'
+  document.getElementById('appointment').style.display = 'none'
+  const appointmentTableBody = document.getElementById('appointmentTableBody');
+    appointmentTableBody.innerHTML = ""; // Clear table body
+
+    database.ref('Appointment').orderByChild('timestamp').once('value')
+        .then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+                const appointment = childSnapshot.val();
+                const row = document.createElement('tr');
+
+                const fullNameCell = document.createElement('td');
+                fullNameCell.textContent = appointment.FullName;
+                row.appendChild(fullNameCell);
+
+                const genderCell = document.createElement('td');
+                genderCell.textContent = appointment.Gender;
+                row.appendChild(genderCell);
+
+                const addressCell = document.createElement('td');
+                addressCell.textContent = appointment.Address;
+                row.appendChild(addressCell);
+
+                const healthInsuranceCell = document.createElement('td');
+                healthInsuranceCell.textContent = appointment.HealthInsurance;
+                row.appendChild(healthInsuranceCell);
+
+                const numberHealthInsuranceCell = document.createElement('td')
+                numberHealthInsuranceCell.textContent = appointment.NumberHealthInsurance
+                row.appendChild(numberHealthInsuranceCell)
+
+                const phoneNumberCell = document.createElement('td');
+                phoneNumberCell.textContent = appointment.PhoneNumber;
+                row.appendChild(phoneNumberCell);
+
+                const timeCell = document.createElement('td');
+                timeCell.textContent = appointment.Time;
+                row.appendChild(timeCell);
+
+                const dateCell = document.createElement('td')
+                dateCell.textContent = appointment.Date
+                row.appendChild(dateCell)
+
+                const clinicCell = document.createElement('td');
+                clinicCell.textContent = appointment.Clinic;
+                row.appendChild(clinicCell);
+
+                appointmentTableBody.appendChild(row);
+            });
+
+            const backButtonRow = `
+                <tr>
+                    <td colspan="7">
+                        <button onclick="ShowBookingForm()">Quay lại</button>
+                    </td>
+                </tr>
+            `;
+            appointmentTableBody.innerHTML += backButtonRow;
+        })
+        .catch((error) => {
+            console.error("Error loading appointments:", error);
+        });
+
+}
+function ShowBookingForm(){
+  document.getElementById('appointmentTable').style.display = 'none'
+  document.getElementById('appointment').style.display = 'block'
+
+   
+}
+</script>
+
+</html>
