@@ -1,165 +1,19 @@
-
 'use client';
 import Link from "next/link";
 import Script from "next/script";
 
 import { auth } from "../components/auth";
+import { useEffect } from "react";
 import { signInWithCustomToken } from "firebase/auth";
-import logout from "../components/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 
 //!KIEM TRA TRANG THAI LOGIN
-function checkLoginStatus() {
-    auth.onAuthStateChanged(async function (user) {
-        if (user) {
-            console.log("User is signd in")
-            const isHaveToken = localStorage.getItem('customToken')
-            console.log(isHaveToken)
+;
+    
 
-            localStorage.setItem('userID', user.uid)
-            if (isHaveToken) {
-                console.log('Token tồn tại')
-                try {
-                    await signInWithCustomToken(auth, isHaveToken);
-                    const idTokenResult = await auth.currentUser.getIdTokenResult();
-                    const idToken = idTokenResult.token;
-                    fetch('../api/html', {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${idToken}`
-                        }
-                    })
-                        .then(response => response.text())
-                        .then(html => {
-                            const renderContainer = document.getElementById('functionForStaff');
-                            renderContainer.innerHTML = html;
-                        })
-                        .catch(error => {
-                            console.log('Lỗi khi gọi API: ', error);
-                        });
-                } catch (error) {
-                    console.log('Lỗi khi đăng nhập bằng token:', error);
-                    localStorage.removeItem('customToken');
-                    console.log('localStorage đã được xóa vì token không hợp lệ');
-                    logout();
-                }
-            }
-            else {
-                console.log('Token khong ton tai')
-            }
-            document.getElementById("LOGIN").style.display = "none";
-            document.getElementById("REGISTER").style.display = "none";
-            document.getElementById("SET_APPOINTMENT").style.display = "block";
-            document.getElementById("INFO").style.display = "block";
-            const userEmail = user.email;
-            try {
-                const response = await fetch('../api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userEmail })
-                })
-
-                if (response.ok) {
-                    const token = await response.text();
-                    localStorage.setItem('customToken', token);
-                    console.log("Token nhận được thành công ", token);
-                    firebase.auth().signInWithCustomToken(token)
-                        .then(() => {
-                        auth.currentUser.getIdTokenResult()
-                                .then((idTokenResult) => {
-                            const idToken = idTokenResult.token;
-                            fetch('../api/html', {
-                                method: 'GET',
-                                headers: {
-                                    'Authorization': `Bearer ${idToken}`
-                                }
-                            })
-                                .then(response => response.text())
-                                .then(html => {
-                                    const renderCotainer = document.getElementById('functionForStaff');
-                                    renderCotainer.innerHTML = html;
-                                })
-                                .catch(error => {
-                                    console.log('Loi ja', error)
-                                })
-                        })
-                    })
-
-                }
-            } catch (error) {
-                console.error('Lỗi khi gửi yêu cầu', error);
-            }
-
-        } else {
-            console.log("No user is signed in.");
-            document.getElementById("login").style.display = "block";
-            document.getElementById("register").style.display = "block";
-            document.getElementById("setAppointment").style.display = "none";
-            document.getElementById("info").style.display = "none";;
-        }
-    });
-}
-
-function loadCheck() {
-    document.addEventListener('DOMContentLoaded', function () {
-    checkLoginStatus()});
-}
 export default function homePage() {
     return (
         <>
-            <Script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js" />
-            <Script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js" />
-            <Script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js" />
-            <Script onReady={loadCheck} />
-            <body>
-                <div id="main">
-                    <div id="Header">
-                        <div className="row">
-                            <div className="col-lg-2 col-6">
-                                <div className="Logo">
-                                    <h1>
-                                        <a title="BOOKNMEET India">BOOKNMEET</a>
-                                    </h1>
-                                </div>
-                            </div>
-                            <div className="col-lg-10 col-6">
-                                <div className="main-menu">
-                                    <ul className="nav">
-                                        <li id="Home">
-                                            <Link href="/">Home</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/">Page1</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/">Page2</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/">Page3</Link>
-                                        </li>
-                                        <li id="Info">
-                                            <Link href="/">Info</Link>
-                                        </li>
-                                        <li id="setAppointment">
-                                            <Link href="/">Appointment</Link>
-                                        </li>
-                                        <li id="login">
-                                            <Link href="/login">
-                                                Login
-                                            </Link>
-                                        </li>
-                                        <li id="logout">
-                                            <Link href="">
-                                                Logout
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 {/* PHAN SEARCH */}
                 <div className="SearchBox version1">
                     <div className="content">
@@ -311,7 +165,6 @@ export default function homePage() {
                 <div className="Footer">
 
                 </div>
-            </body>
         </>
     );
 }

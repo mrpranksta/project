@@ -31,6 +31,7 @@ if (valid_email(Email) == false || valid_password == false){
     return
 }
 
+
 auth.signInWithEmailAndPassword(Email, Password)
 .then( function(){
     database.ref('Register').orderByChild('Email').equalTo(Email).once('value')
@@ -46,6 +47,7 @@ auth.signInWithEmailAndPassword(Email, Password)
             }
             database_ref.child('Login/' + userID).update(user_data)
             alert('user logged in!')
+            //redirect
             window.location.href = "index1.html";
         })
     })

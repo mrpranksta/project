@@ -19,41 +19,6 @@ const database = firebase.database()
 //const storage = firebase.storage()
 //Phân quyền
 
-
-
-function valid_email(email) {
-    expression = /^[^@]+@\w+(\.\w+)+\w$/
-    if (expression.test(email) == true) {
-      // Email is good
-      return true
-    } else {
-      // Email is not good
-      return false
-    }
-  }
-
-function valid_password(password) {
-    
-    // Firebase only accepts lengths greater than 6
-    if (password.length < 6) {
-      return false
-    } else {
-      return true
-    }
-  }
-function valid_name(name){
-    if (name == null){
-        return false
-    }
-    if (name.length <= 0){
-        return false
-    } else {
-        return true
-    }
-}
-
-
-
 //+ firebase.auth().currentUser.uid
 function deletePatient(patientKey, Clinic, patinetDiv, editButton, deleteButton){
     const confirmDelete = confirm('Are you sure to delete this patient?')
